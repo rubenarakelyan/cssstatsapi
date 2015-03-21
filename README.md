@@ -27,11 +27,11 @@ PHP API to obtain statistics for your CSS from http://cssstats.com/.
 
     json query ( string $site_url [, mixed $display_details = 'all' ] )
 
-* `$site_url`: The URL of the site to analyse - this is passed to cssstat.com for analysis.
+* `$site_url`: The URL of the site to analyse - this is passed to cssstats.com for analysis.
 * `$display_details`: Either
     * `'all'` to include all sections in the output (note that this does not currently capture graph content),
     * `null` to include only the top stats and declaration counts in the output, or
-    * an array containing one or more of `unique_colors`, `unique_background_colors`, `unique_font_sizes`, `unique_font_families` or `media_queries` to also include those sections in the output
+    * an array containing one or more of `unique_colors`, `unique_background_colors`, `unique_font_sizes`, `unique_font_families` and/or `media_queries` to also include those sections in the output
 
 ## Support
 
