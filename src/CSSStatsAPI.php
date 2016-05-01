@@ -1,6 +1,10 @@
 <?php
 namespace RubenArakelyan\CSSStatsAPI;
 
+/**
+ * Class CSSStatsAPI
+ * @package RubenArakelyan\CSSStatsAPI
+ */
 class CSSStatsAPI
 {
 
