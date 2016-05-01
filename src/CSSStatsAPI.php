@@ -1,30 +1,18 @@
 <?php
+namespace RubenArakelyan\CSSStatsAPI;
 
-// **********************************************************************
-// CSS Stats PHP API for CSSStats.com
-// Version 1.0
-// Author: Ruben Arakelyan <ruben@ra.me.uk>
-//
-// Copyright (C) 2015 Ruben Arakelyan.
-// This file is licensed under the licence available at
-// http://creativecommons.org/licenses/by-sa/3.0/
-//
-// For more information, see https://github.com/rubenarakelyan/cssstatsapi
-// **********************************************************************
+class CSSStatsAPI
+{
 
-class CSSStatsAPI {
-    
-    // cURL handle
     private $ch;
-    
-    // URL to send queries to
     private $url = 'http://cssstats.com/stats';
-    
-    // Debugging mode
     private $debug = false;
-    
-    // Default constructor
-    public function __construct($debug = false) {
+
+    /**
+     * Constructor
+     */
+    public function __construct($debug = false)
+    {
         // Set debugging mode
         $this->debug = $debug;
         
@@ -39,15 +27,23 @@ class CSSStatsAPI {
         // Return the result of the query
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
     }
-    
-    // Default destructor
-    public function __destruct() {
+
+    /**
+     * Destructor
+     */
+    public function __destruct()
+    {
         // Delete the instance of cURL
         curl_close($this->ch);
     }
-    
-    // Send a query
-    public function query($site_url, $display_details = 'all') {
+
+    /**
+	 * Send an API query
+	 *
+	 * @return JSON
+	 */
+    public function query($site_url, $display_details = 'all')
+    {
         // Exit if the site URL is not defined
         if (!isset($site_url) || $site_url === '') {
             return $this->_error('Site URL not provided.');
@@ -59,12 +55,12 @@ class CSSStatsAPI {
         }
         
         if ($display_details === null) {
-            $display_details = array();
+            $display_details = [];
         }
         
         // Set up the response array
-        $response = array();
-        $response['cssstats'] = array();
+        $response = [];
+        $response['cssstats'] = [];
         
         // Query the site
         $result = $this->_execute_query($site_url);
@@ -98,7 +94,7 @@ class CSSStatsAPI {
         $css_size_gzipped = trim(utf8_decode(iterator_to_array($xpath->query($query))[0]->nodeValue));
         $response['cssstats']['css_size_gzipped'] = str_replace(' (Gzipped)', '', $css_size_gzipped);
         
-        $response['cssstats']['stats'] = array();
+        $response['cssstats']['stats'] = [];
         
         //
         // Extract: top stats
@@ -112,7 +108,7 @@ class CSSStatsAPI {
         $this->_debug($data_top_stats, 'XPath query results - top stats');
         
         // Go through all the extracted data
-        $array_top_stats = array();
+        $array_top_stats = [];
         foreach ($data_top_stats as $d) {
             // Trim the node value and fix UTF-8 values
             $value = trim(utf8_decode($d->nodeValue));
@@ -125,7 +121,7 @@ class CSSStatsAPI {
         }
         
         // Add data to the response
-        $response['cssstats']['stats']['top_stats'] = array();
+        $response['cssstats']['stats']['top_stats'] = [];
         $response['cssstats']['stats']['top_stats']['rules'] = $array_top_stats[0];
         $response['cssstats']['stats']['top_stats']['selectors'] = $array_top_stats[1];
         $response['cssstats']['stats']['top_stats']['declarations'] = $array_top_stats[2];
@@ -143,7 +139,7 @@ class CSSStatsAPI {
         $this->_debug($data_declarations, 'XPath query results - declarations');
         
         // Go through all the extracted data
-        $array_declarations = array();
+        $array_declarations = [];
         foreach ($data_declarations as $d) {
             // Trim the node value and fix UTF-8 values
             $value = trim(utf8_decode($d->nodeValue));
@@ -156,7 +152,7 @@ class CSSStatsAPI {
         }
         
         // Add data to the response
-        $response['cssstats']['stats']['declarations'] = array();
+        $response['cssstats']['stats']['declarations'] = [];
         $response['cssstats']['stats']['declarations']['font_size'] = $array_declarations[0];
         $response['cssstats']['stats']['declarations']['float'] = $array_declarations[1];
         $response['cssstats']['stats']['declarations']['width'] = $array_declarations[2];
@@ -177,7 +173,7 @@ class CSSStatsAPI {
             $this->_debug($data_unique_colours, 'XPath query results - unique colours');
             
             // Go through all the extracted data
-            $array_unique_colours = array();
+            $array_unique_colours = [];
             foreach ($data_unique_colours as $d) {
                 // Trim the node value and fix UTF-8 values
                 $value = trim(utf8_decode($d->nodeValue));
@@ -190,7 +186,7 @@ class CSSStatsAPI {
             }
             
             // Add data to the response
-            $response['cssstats']['stats']['unique_colors'] = array();
+            $response['cssstats']['stats']['unique_colors'] = [];
             foreach ($array_unique_colours as $d) {
                 $response['cssstats']['stats']['unique_colors'][] = $d;
             }
@@ -209,7 +205,7 @@ class CSSStatsAPI {
             $this->_debug($data_unique_background_colours, 'XPath query results - unique background colours');
             
             // Go through all the extracted data
-            $array_unique_background_colours = array();
+            $array_unique_background_colours = [];
             foreach ($data_unique_background_colours as $d) {
                 // Trim the node value and fix UTF-8 values
                 $value = trim(utf8_decode($d->nodeValue));
@@ -222,7 +218,7 @@ class CSSStatsAPI {
             }
             
             // Add data to the response
-            $response['cssstats']['stats']['unique_background_colors'] = array();
+            $response['cssstats']['stats']['unique_background_colors'] = [];
             foreach ($array_unique_background_colours as $d) {
                 $response['cssstats']['stats']['unique_background_colors'][] = $d;
             }
@@ -241,7 +237,7 @@ class CSSStatsAPI {
             $this->_debug($data_unique_font_sizes, 'XPath query results - unique font sizes');
             
             // Go through all the extracted data
-            $array_unique_font_sizes = array();
+            $array_unique_font_sizes = [];
             foreach ($data_unique_font_sizes as $d) {
                 // Trim the node value and fix UTF-8 values
                 $value = trim(utf8_decode($d->nodeValue));
@@ -254,7 +250,7 @@ class CSSStatsAPI {
             }
             
             // Add data to the response
-            $response['cssstats']['stats']['unique_font_sizes'] = array();
+            $response['cssstats']['stats']['unique_font_sizes'] = [];
             foreach ($array_unique_font_sizes as $d) {
                 $response['cssstats']['stats']['unique_font_sizes'][] = str_replace('Font Size ', '', $d);
             }
@@ -273,7 +269,7 @@ class CSSStatsAPI {
             $this->_debug($data_unique_font_families, 'XPath query results - unique font families');
             
             // Go through all the extracted data
-            $array_unique_font_families = array();
+            $array_unique_font_families = [];
             foreach ($data_unique_font_families as $d) {
                 // Trim the node value and fix UTF-8 values
                 $value = trim(utf8_decode($d->nodeValue));
@@ -286,7 +282,7 @@ class CSSStatsAPI {
             }
             
             // Add data to the response
-            $response['cssstats']['stats']['unique_font_families'] = array();
+            $response['cssstats']['stats']['unique_font_families'] = [];
             foreach ($array_unique_font_families as $d) {
                 $response['cssstats']['stats']['unique_font_families'][] = $d;
             }
@@ -305,7 +301,7 @@ class CSSStatsAPI {
             $this->_debug($data_media_queries, 'XPath query results - media queries');
             
             // Go through all the extracted data
-            $array_media_queries = array();
+            $array_media_queries = [];
             foreach ($data_media_queries as $d) {
                 // Trim the node value and fix UTF-8 values
                 $value = trim(utf8_decode($d->nodeValue));
@@ -318,7 +314,7 @@ class CSSStatsAPI {
             }
             
             // Add data to the response
-            $response['cssstats']['stats']['media_queries'] = array();
+            $response['cssstats']['stats']['media_queries'] = [];
             foreach ($array_media_queries as $d) {
                 $response['cssstats']['stats']['media_queries'][] = $d;
             }
@@ -327,9 +323,14 @@ class CSSStatsAPI {
         // Return the JSON response
         return json_encode($response);
     }
-    
-    // Execute a query
-    private function _execute_query($site_url) {
+
+    /**
+	 * Execute an API query
+	 *
+	 * @return JSON
+	 */
+    private function _execute_query($site_url)
+    {
         // Assemble the data to send
         $fields = 'url=' . urlencode($site_url);
         
@@ -353,18 +354,26 @@ class CSSStatsAPI {
             return $result;
         }
     }
-    
-    // Return an error message
-    private function _error($error_message) {
-        return json_encode(array('error_message' => $error_message));
+
+    /**
+	 * Return an error message
+	 *
+	 * @return JSON
+	 */
+    private function _error($error_message)
+    {
+        return json_encode(['error_message' => $error_message]);
     }
-    
-    // Print out debugging messages
-    private function _debug($debug_message, $debug_message_title = '') {
+
+    /**
+	 * Print out debugging messages
+	 *
+	 * @return void
+	 */
+    private function _debug($debug_message, $debug_message_title = '')
+    {
         if ($this->debug) {
             echo '<pre><strong>' . $debug_message_title . '</strong><br>' . print_r($debug_message, true) . '</pre>';
         }
     }
 }
-
-?>
